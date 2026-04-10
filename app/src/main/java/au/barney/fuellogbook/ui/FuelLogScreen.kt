@@ -564,15 +564,7 @@ fun AddLogScreen(
             Column(modifier = Modifier.weight(1f)) {
                 OutlinedTextField(
                     value = totalCostInput,
-                    onValueChange = { newValue ->
-                        val digits = newValue.filter { it.isDigit() }
-                        if (digits.isEmpty()) {
-                            totalCostInput = ""
-                        } else {
-                            val doubleValue = digits.toDouble() / 100.0
-                            totalCostInput = String.format(Locale.US, "%.2f", doubleValue)
-                        }
-                    },
+                    onValueChange = { totalCostInput = it },
                     label = { Text("Total Cost") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -594,21 +586,17 @@ fun AddLogScreen(
             OutlinedTextField(
                 value = costPerLitreInput,
                 onValueChange = { newValue ->
-                    // Auto-insert decimal point
+                    // Reverted Price per L logic to the auto-insert dot version
                     val digits = newValue.filter { it.isDigit() }
                     if (isCents) {
-                        // c/L: XXX.X format (3 digits before, 1 after)
+                        // c/L: XXX.X
                         if (digits.length >= 4) {
                             costPerLitreInput = digits.substring(0, 3) + "." + digits.substring(3, 4)
-                        } else if (digits.length == 3) {
-                             // Optional: stay as XXX or wait for 4th digit? 
-                             // Let's just allow typing and only format when it looks like a full price
-                             costPerLitreInput = newValue
                         } else {
                             costPerLitreInput = newValue
                         }
                     } else {
-                        // $/L: X.XX format (1 digit before, 2 after)
+                        // $/L: X.XX
                         if (digits.length >= 3) {
                             costPerLitreInput = digits.substring(0, 1) + "." + digits.substring(1, 3)
                         } else {
